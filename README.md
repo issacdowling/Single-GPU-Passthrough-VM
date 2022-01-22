@@ -127,7 +127,7 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Browse
 * Browse Local
 * Downloads
-* Double Click The ISO file
+* Select the ISO file
 * Forward
 * 80% of your Ram in the Memory section
 * Leave CPU settings alone for later
@@ -152,7 +152,9 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click add hardware, this time add a TPM with the default settings
 * Now, go to the top, and press begin installation.
 * When you see a menu which says press any key to boot from CD, press any key. If you miss the time window, close the VM, right click it and force off, then try again.
-Keep in mind, during first install, graphics and framerate will be pretty bad
+
+**Keep in mind, during first install, graphics and framerate will be pretty bad**
+
 * Go through installation as normal for the first bit.
 * Next, install now, I don't have a product key, any version not ending in N, read and accept, next, custom install.
 * Now, press load drivers, then ok, and select the driver that appears with w11 (or whatever other version of windows you're using) in the name. Click it and press next.
