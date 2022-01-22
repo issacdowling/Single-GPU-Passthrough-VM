@@ -195,3 +195,158 @@ If I have an ID of 2b:00:1, I would enter is as 2b_00_1 after the underscore in 
 So, for me, it's VIRSH_GPU_VIDEO=pcie_0000_2b_00_0, and VIRSH_GPU_AUDIO=pcie_0000_2b_00_1
 
 Now, **CTRL+X, Y, Enter**
+
+#### Start file
+Run
+```
+sudo nano /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
+```
+Paste
+```
+#load variables defined earlier
+source "/etc/libvirt/hooks/kvm.conf"
+
+#Stop disp manager
+systemctl stop sddm.service
+
+#unbind VTconsoles
+echo 0 > /sys/class/vtconsole/vtcon0/bind
+echo 0 > /sys/class/vtconsole/vtcon1/bind
+
+#Avoid race condition
+sleep 10
+
+#unbind GPU 
+virsh nodedev-detatch $VIRSH_GPU_VIDEO
+virsh nodedev-detatch $VIRSH_GPU_AUDIO
+
+#load vfio
+modprobe vfio
+modprobe vfio_pci
+modprobe vfio_iommu_type1
+
+#CPU perf
+echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+```
+Copy This into the text editor, and we'll edit to fit your PC.
+
+*********COME BACK TO THIS LATER INCASE OF FAIL**********************
+The first 4 sections should be left alone, other than that if you have an AMD GPU, go to the package manager, press the three lines, and enable AUR. Then seach Vendor-Reset. Get the one with a longer title, it was made on the 18th November 2020.
+
+For the VTconsoles bit, go into another terminal and run ``ls /sys/class/vtconsole/``. For however many vtcons there are, copy the lines that are already in this code, changing the number to match. Most people just have vtcon0 and 1, which is already setup.
+
+The avoid race condition section basically just waits to ensure previous bits of code are excecuted before continuing. For most people, this does not need to be 10, but for some it does. Start at 10, and then once we're done, try lowering it and seeing what works. Personally, I use 1
+
+If on AMD, you're done, if on nvidia, **add these lines just before Unbind GPU**
+```
+modprobe -r nvidia_drm
+modprobe -r nvidia_modeset
+modprobe -r drm_kms_helper
+modprobe -r nvidia
+modprobe -r i2c_nvidia_gpu
+modprobe -r drm
+modprobe -r nvidia_uvm
+```
+
+Then, leave the rest of the script alone, and **CTRL+X, Y, ENTER**
+
+Run
+```
+sudo nano /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
+```
+In the text editor, paste this:
+```
+#load variables
+source "/etc/libvirt/hooks/kvm.conf"
+
+#unload vfio-pci
+modprobe -r vfio_pci
+modprobe -r vfio_iommu_type1
+modprobe -r vfio
+
+#Rebind GPU
+virsh nodedev-reattach $VIRSH_GPU_VIDEO
+virsh nodedev-reattach $VIRSH_GPU_AUDIO
+
+#Rebind VTconsoles
+echo 1 > /sys/class/vtconsole/vtcon0/bind
+echo 1 > /sys/class/vtconsole/vtcon1/bind
+
+#Restart Display Service
+systemctl start sddm.service
+
+#CPU perf
+echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+```
+The first 4 sections should be left alone always. 
+
+For VTconsoles, make the same changes, if any, you made in the start script.
+
+Also, if not using sddm (for example, gnome users with gdm), change that here too.
+
+On NVIDIA, **add these before "rebind GPU"
+```
+modprobe nvidia_drm
+modprobe nvidia_modeset
+modprobe drm_kms_helper
+modprobe nvidia
+modprobe i2c_nvidia_gpu
+modprobe drm
+modprobe nvidia_uvm
+```
+**Now, CTRL+X, Y, ENTER**
+
+
+Finally, *ensure these scripts are executable!
+```
+sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
+sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
+```
+# We're nearly there! Give yourself a pat on the back
+
+Open virtual machine manager, and click on your machine. Go to the info icon in the top left, and follow these steps:
+* Remove Tablet
+* Remove Display Spice
+* Remove Serial 1
+* Remove Channel spice
+* Remove Sound ich9
+* Remove Video QXL
+* Remove anything else unnecessary if you'd like.
+* Add Hardware
+* USB Host device
+* Find your keyboard here, select it and finish
+* Repeat for your mouse
+* You can try adding other things, but try them after we have a working VM, since some devices don't like it and cause a crash.
+* Add Hardware
+* PCI Host device
+* Your GPU Video adapter
+* Repeat for GPU audio adapter. You can identify either of these using the IDs from before.
+* Close the VM window for a sec, go back to the first Virtual Machine Manager window.
+* Click edit at the top, followed by preferences
+* Enable XML editing, then click back into your VM
+* Click on one of the PCIE devices, click xml, and make a line below the line 'source'
+* Paste in this line:
+```
+  <rom file="/etc/libvirt/gpubios/gpubios.rom"/>
+```
+* Copy that line to the other PCIE device too.
+* Now go to overview, and click the XML tab.
+* Look for the line beginning with "Spinlock State"
+* If you're on NVIDIA, remember to patch your bios like I mentioned earlier, there are guides online, and paste this line in:
+````
+<vendor_id state="on" value="spaghetti"/>
+      <vpindex state="on"/>
+      <runtime state="on"/>
+      <synic state="on"/>
+      <stimer state="on"/>
+      <reset state="on"/>
+
+````
+Then, just below the hyperv line, paste:
+````
+    <kvm>
+      <hidden state="on"/>
+    </kvm>
+````    
+
+## Restart your PC, and give your VM a go!
