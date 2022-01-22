@@ -163,3 +163,35 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Press the info icon, and press boot options, and tick VFIO disk 1. Then, go to the 2 CDROM drives, and remove + delete them.
 * Now press play, and go back to the view icon next to the info icon. You'll go through the windows personalisation setup now.
 * When you're on the windows desktop, shut down windows. You can X out of it in Linux afterwards.
+
+## Hooks
+Run 
+```
+sudo mkdir /etc/libvirt/hooks
+sudo wget 'https://raw.githubusercontent.com/PassthroughPOST/VFIO-Tools/master/libvirt_hooks/qemu' \
+     -O /etc/libvirt/hooks/qemu
+sudo chmod +x /etc/libvirt/hooks/qemu
+sudo systemctl restart libvirtd
+sudo mkdir /etc/libvirt/hooks/qemu.d
+sudo mkdir /etc/libvirt/hooks/qemu.d/Windows
+sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/prepare
+sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/release
+sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/prepare/begin
+sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/release/end
+```
+This will download files to do with VM hooks, and make directories, along with restarting libvirtd
+
+Now run:
+```
+sudo nano /etc/libvirt/hooks/kvm.conf
+```
+In the text editor that opened, copy this, remembering that pasting into a terminal is CTRL+SHIFT+V: 
+```
+VIRSH_GPU_VIDEO=pcie_0000_
+VIRSH_GPU_AUDIO=pcie_0000_
+```
+Now, add your PCIE IOMMU IDs you saved before. The formatting is as so...
+If I have an ID of 2b:00:1, I would enter is as 2b_00_1 after the underscore in the text file.
+So, for me, it's VIRSH_GPU_VIDEO=pcie_0000_2b_00_0, and VIRSH_GPU_AUDIO=pcie_0000_2b_00_1
+
+Now, **CTRL+X, Y, Enter**
