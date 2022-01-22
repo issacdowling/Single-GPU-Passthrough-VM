@@ -209,6 +209,9 @@ source "/etc/libvirt/hooks/kvm.conf"
 #Stop disp manager
 systemctl stop display-manager.service
 
+## Uncomment if you use GDM
+#killall gdm-x-session
+
 #unbind VTconsoles
 echo 0 > /sys/class/vtconsole/vtcon0/bind
 echo 0 > /sys/class/vtconsole/vtcon1/bind
