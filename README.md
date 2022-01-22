@@ -23,11 +23,11 @@ sudo nano /etc/default/grub
 ```
 Then, on the line **GRUB_CMDLINE_LINUX_DEFAULT=**, *inside* the quotation marks, add these if you've got an AMD cpu:
 ```
-iommu=pt amd_iommu=on video=efifb:off
+iommu=pt amd_iommu=on
 ```
 Of course, on intel it's:
 ```
-iommu=pt intel_iommu=on video=efifb:off
+iommu=pt intel_iommu=on
 ```
 
 CTRL+X, Y, ENTER, to save and exit.
@@ -213,6 +213,9 @@ systemctl stop sddm.service
 echo 0 > /sys/class/vtconsole/vtcon0/bind
 echo 0 > /sys/class/vtconsole/vtcon1/bind
 
+#Unbind efifb
+echo "efi-framebuffer.0" > /sys/bus/platform/devices/efi-framebuffer.0/driver/unbind
+
 #Avoid race condition
 sleep 10
 
@@ -271,6 +274,9 @@ virsh nodedev-reattach $VIRSH_GPU_AUDIO
 #Rebind VTconsoles
 echo 1 > /sys/class/vtconsole/vtcon0/bind
 echo 1 > /sys/class/vtconsole/vtcon1/bind
+
+#Rebind efifb
+echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
 
 #Restart Display Service
 systemctl start sddm.service
