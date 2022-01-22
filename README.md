@@ -11,6 +11,11 @@ or
 ```
 sudo apt update && sudo apt upgrade
 ```
+
+## Download what you'll need later
+[VirtIO Drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
+
+[Windows ISO](https://www.microsoft.com/en-gb/software-download/windows11/)
 ## Change bootloader options
 ### If using grub:
 ```
@@ -97,3 +102,53 @@ sudo systemctl enable libvirtd
 to add yourself to groups, and enable libvirtd.
 
 #### Now, reboot
+
+## GPU Bios
+Some GPUs need patched firmware to work for this. In this example, we won't be patching it, since at the time of writing, I have an AMD Vega 64, which doesn't need patching, however we will be saving a bios anyway to pass through to the VM.
+Go to the [Techpowerup Bios Repository](https://www.techpowerup.com/vgabios/), and search for your GPU. Download it's bios. You want to find your exact model. E.G: MSI AIR BOOST VEGA 64, as opposed to just "Vega 64". Once you have your rom, rename it to "gpubios.rom", and ensure it's in your Downloads folder. 
+
+Then, you can just run
+```
+sudo mkdir /etc/libvirt/gpubios
+sudo mv /home/$(whoami)/Downloads/gpubios.rom /etc/libvirt/gpubios
+```
+to move it into a convenient place.
+
+I'd also suggest running
+```
+**sudo chmod 755 /etc/libvirt/gpubios/gpubios.rom**
+```
+to ensure permissions are ok.
+
+## VM Setup
+Open Virtual Machine Manager, which should've been installed earlier, click QEMU/KVM, and then the New VM button in the top left. Here are the buttons to press:
+* Local Install Media
+* Forward
+* Browse
+* Browse Local
+* Downloads
+* Double Click The ISO file
+* Forward
+* 80% of your Ram in the Memory section
+* Leave CPU settings alone for later
+* Forward
+* Untick "Enable Storage For This Machine", we'll handle it later.
+* Forward
+* Set a name. Examples shown will use "Windows". Change "Windows" to whatever you call your VM if you choose something different.
+* Tick customise config before install
+* Finish
+* Click BIOS, and change it to the /x64/OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
+* Apply
+* Go to CPUs
+* Click topology, and manually set topology.
+* Sockets to 1, set cores to -1 from whatever your CPU has, so a 6 core processor would have 5.
+* Go to a terminal and type htop. At the top you'll see a bunch of charts going horizontally at the top, which are numbered. On a Ryzen 3600, they go from 0-11, meaning there are 12 threads, or 2x the core count, meaning it has hyperthreading. If you have double as many bars as cores, set threads on your VM to 2. If it's the same as the physical cores you have, set threads to 1.
+
+* Click add hardware in the bottom left of the virtual machine manager, and select storage, which is normally at the top
+* Set however many GB you want it to have (keep in mind, the virtual disk only takes as much space as the VM is actually using, so don't worry about it immediately eating all your storage space on the Host)
+* Set the Bus Type to VirtIO instead of SATA
+* Add hardware to your VM again, select storage, and set the device type to CDROM Device. Click "select or create custom storage", then browse to the VirtIO iso. Press finish
+* Click on SATA CDROM 2, and click browse, then browse local, and head to your downloads, where you'll double click the VirtIO drivers iso. Press apply.
+* Click add hardware, this time add a TPM with the default settings
+* Now, go to the top, and press begin installation.
+* When you see a menu which says press any key to boot from CD, press any key. If you miss the time window, close the VM, right click it and force off, then try again.
