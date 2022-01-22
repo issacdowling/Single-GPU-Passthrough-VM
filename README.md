@@ -207,7 +207,7 @@ Paste
 source "/etc/libvirt/hooks/kvm.conf"
 
 #Stop disp manager
-systemctl stop sddm.service
+systemctl stop display-manager.service
 
 #unbind VTconsoles
 echo 0 > /sys/class/vtconsole/vtcon0/bind
@@ -279,7 +279,7 @@ echo 1 > /sys/class/vtconsole/vtcon1/bind
 echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
 
 #Restart Display Service
-systemctl start sddm.service
+systemctl start display-manager.service
 
 #CPU perf
 echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
