@@ -372,7 +372,7 @@ If on ryzen, add this to your CPU section in the XML, something something perfor
 ````
 For CPU pinning, first replace "Domain Type = KVM" with:
 ```<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>```
-Then, replace the line ending in </vcpu> with:
+Then, replace the line ending in vcpu with:
 ```
 <vcpu placement="static">8</vcpu>
 <iothreads>2</iothreads>
