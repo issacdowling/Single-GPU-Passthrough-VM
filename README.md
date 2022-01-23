@@ -363,3 +363,10 @@ Then, just below the hyperv line, paste:
 ````    
 
 ## Restart your PC, and give your VM a go!
+
+## If it works, here are some extras.
+### Performance
+If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
+````
+<feature policy='require' name='topoext'/>
+````
