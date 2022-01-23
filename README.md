@@ -266,13 +266,19 @@ modprobe -r vfio_pci
 modprobe -r vfio_iommu_type1
 modprobe -r vfio
 
+sleep 2
+
 #Rebind GPU
 virsh nodedev-reattach $VIRSH_GPU_VIDEO
 virsh nodedev-reattach $VIRSH_GPU_AUDIO
 
+sleep 2
+
 #Rebind VTconsoles
 echo 1 > /sys/class/vtconsole/vtcon0/bind
 echo 1 > /sys/class/vtconsole/vtcon1/bind
+
+sleep 3
 
 #Rebind efifb
 echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
@@ -288,6 +294,8 @@ The first 4 sections should be left alone always.
 For VTconsoles, make the same changes, if any, you made in the start script.
 
 Also, if not using sddm (for example, gnome users with gdm), change that here too.
+
+As with the start script, you can later try reducing/removing any sleep commands
 
 On NVIDIA, **add these before "rebind GPU"
 ```
