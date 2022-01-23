@@ -365,15 +365,46 @@ Then, just below the hyperv line, paste:
 ## Restart your PC, and give your VM a go!
 
 ## If it works, here are some extras.
-#### Performance
+### Performance
 If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
 ````
 <feature policy='require' name='topoext'/>
 ````
-#### I want to pass through devices in the same IOMMU group (this is the section for people with wonky IOMMU groups from earlier)
-Well, switch your kernel to Linux-Zen. Or do some other method to get the ACS patch, but I like Linux-Zen. Then, go to your bootloader options, on grub that's /etc/default/grub, and add pcie_acs_override=downstream,multifunction to your kernel parameters. Then, run
+For CPU pinning, first replace "Domain Type = KVM" with:
+```<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>```
+Then, replace the line ending in </vcpu> with:
+```
+<vcpu placement="static">8</vcpu>
+<iothreads>2</iothreads>
+<cputune>
+    <vcpupin vcpu="0" cpuset="4"/>
+    <vcpupin vcpu="1" cpuset="5"/>
+    <vcpupin vcpu="2" cpuset="6"/>
+    <vcpupin vcpu="3" cpuset="7"/>
+    <vcpupin vcpu="4" cpuset="8"/>
+    <vcpupin vcpu="5" cpuset="9"/>
+    <vcpupin vcpu="6" cpuset="10"/>
+    <vcpupin vcpu="7" cpuset="11"/>
+    <emulatorpin cpuset="0-1"/>
+    <iothreadpin iothread="1" cpuset="2-3"/>
+    </cputune>
+ ```
+ To modify it, first change the number of vcpus to be the equal to 2x the cores we'll be passing through. Keep 2 cores free in this case, instead of just 1 which i'd do if not pinning. Then, use LSTOPO to match groups of cores. So, vcpu 0 I have = to cpuset 4, then vcpu 1 is cpuset 5. This is because one of my physical cores shows as 'owning' 4 and 5. That's the best explanation I can think of. For emulatorpin, change to one other free core, then set iothread to the final free core.
+
+
+### I want to pass through devices in the same IOMMU group (this is the section for people with wonky IOMMU groups from earlier)
+Well, switch your kernel to Linux-Zen. Or do some other method to get the ACS patch, but I like Linux-Zen. Then, go to your bootloader options, on grub that's 
+```
+sudo nano /etc/default/grub
+```
+Then, on the line **GRUB_CMDLINE_LINUX_DEFAULT=**, *inside* the quotation marks, add:
+```
+pcie_acs_override=downstream,multifunction
+```
+And run:
 ```
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
-#### Anticheat
+
+### Anticheat
 If you want this VM to be compatible with the most annoying Anti-VM games, go to virt-manager, then the CPU section. Untick "copy host configuration", then set the model to "host-passthrough". Then, boot the VM, and just go to "Turn windows features on or off", and enable Hyper-V. There's a good reason not to have this enabled if you don't absolutely need it, since CPU performance takes a large hit, however this will allow you to bypass *most but not all* VM detection
