@@ -1,7 +1,7 @@
 # 1gpupassvm
 
 ## Prerequesites
-**SOME LATER SCRIPTS REFER TO SDDM BEING YOUR DISPLAY MANAGER, THESE ARE IN THE "HOOKS" SECTION. IF YOU DON'T USE SDDM, REMEMBER TO CHANGE IT! SAME GOES FOR NANO**
+**SOME LATER SCRIPTS REFER TO SDDM BEING YOUR DISPLAY MANAGER, THESE ARE IN THE "HOOKS" SECTION. IF YOU DON'T USE SDDM, REMEMBER TO CHANGE IT! (I'VE HAD MASSIVE ISSUES WITH GDM, YOU SHOULD PROBABLY JUST USE SDDM) SAME GOES FOR NANO**
 
 ## Update things
 ```
@@ -207,9 +207,6 @@ source "/etc/libvirt/hooks/kvm.conf"
 
 #Stop disp manager
 systemctl stop display-manager.service
-
-## Uncomment if you use GDM
-#killall gdm-x-session
 
 #unbind VTconsoles
 echo 0 > /sys/class/vtconsole/vtcon0/bind
