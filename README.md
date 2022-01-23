@@ -365,8 +365,15 @@ Then, just below the hyperv line, paste:
 ## Restart your PC, and give your VM a go!
 
 ## If it works, here are some extras.
-### Performance
+#### Performance
 If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
 ````
 <feature policy='require' name='topoext'/>
 ````
+#### I want to pass through devices in the same IOMMU group (this is the section for people with wonky IOMMU groups from earlier)
+Well, switch your kernel to Linux-Zen. Or do some other method to get the ACS patch, but I like Linux-Zen. Then, go to your bootloader options, on grub that's /etc/default/grub, and add pcie_acs_override=downstream,multifunction to your kernel parameters. Then, run
+```
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+#### Anticheat
+If you want this VM to be compatible with the most annoying Anti-VM games, go to virt-manager, then the CPU section. Untick "copy host configuration", then set the model to "host-passthrough". Then, boot the VM, and just go to "Turn windows features on or off", and enable Hyper-V. There's a good reason not to have this enabled if you don't absolutely need it, since CPU performance takes a large hit, however this will allow you to bypass *most but not all* VM detection
