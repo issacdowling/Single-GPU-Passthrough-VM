@@ -89,8 +89,7 @@ Now, run
 sudo nano /etc/libvirt/qemu.conf
 ```
 CTRL+W to search for: user = "r
-Remove the # from the line, and change root within the quotes, to your username, and remove the # from the line a little below named: group = "root", swap root for libvirt
-**CTRL+X, Y, Enter**.
+Remove the # from the line, and remove the # from the line a little below named: group = "root"
 
 Finally, 
 ```
@@ -223,8 +222,8 @@ echo "efi-framebuffer.0" > /sys/bus/platform/devices/efi-framebuffer.0/driver/un
 sleep 10
 
 #unbind GPU 
-virsh nodedev-detatch $VIRSH_GPU_VIDEO
-virsh nodedev-detatch $VIRSH_GPU_AUDIO
+virsh nodedev-detach $VIRSH_GPU_VIDEO
+virsh nodedev-detach $VIRSH_GPU_AUDIO
 
 #load vfio
 modprobe vfio
