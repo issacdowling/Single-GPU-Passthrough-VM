@@ -59,6 +59,14 @@ done;
 Note the characters (e.g. 2b:00.0) preceeding your "VGA compatible controller" (gpu), and its corresponding audio device.
 
 ## Installing stuff
+First, ensure the multilib repo is enabled.
+Run
+```
+sudo nano /etc/pacman.conf
+```
+Then, scroll down until [Multilib], and delete the # from that line, and the line below.
+CTRL+X,Y,ENTER to save and quit
+
 Run this. It downloads necessary packages, and enables services. It will likely ask you for your password multiple times, however this is why it's important that you can see exactly the commands we're running.
 ```
 sudo pacman -S qemu libvirt edk2-ovmf virt-manager ebtables dnsmasq swtpm
@@ -78,7 +86,7 @@ Run
 sudo nano /etc/libvirt/libvirtd.conf
 ```
 Now, CTRL+W, and search unix_sock.
-Remove # from that line, and replace root with libvirt
+Remove # from that line, and replace libvirt with root
 CTRL+W again, search for unix_sock_rw.
 Remove # again.
 
@@ -115,7 +123,7 @@ to move it into a convenient place.
 
 I'd also suggest running
 ```
-**sudo chmod 755 /etc/libvirt/gpubios/gpubios.rom**
+sudo chmod 755 /etc/libvirt/gpubios/gpubios.rom
 ```
 to ensure permissions are ok.
 
@@ -231,9 +239,6 @@ modprobe vfio_iommu_type1
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 ```
 Copy This into the text editor, and we'll edit to fit your PC.
-
-*********COME BACK TO THIS LATER INCASE OF FAIL**********************
-The first 4 sections should be left alone, other than that if you have an AMD GPU, go to the package manager, press the three lines, and enable AUR. Then seach Vendor-Reset. Get the one with a longer title, it was made on the 18th November 2020.
 
 For the VTconsoles bit, go into another terminal and run ``ls /sys/class/vtconsole/``. For however many vtcons there are, copy the lines that are already in this code, changing the number to match. Most people just have vtcon0 and 1, which is already setup.
 
