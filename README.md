@@ -86,7 +86,7 @@ Run
 sudo nano /etc/libvirt/libvirtd.conf
 ```
 Now, CTRL+W, and search unix_sock.
-Remove # from that line, and replace libvirt with root
+Remove # from that line, and replace libvirt with root.
 CTRL+W again, search for unix_sock_rw.
 Remove # again.
 
@@ -118,14 +118,8 @@ Then, you can just run
 ```
 sudo mkdir /etc/libvirt/gpubios
 sudo mv /home/$(whoami)/Downloads/gpubios.rom /etc/libvirt/gpubios
-```
-to move it into a convenient place.
-
-I'd also suggest running
-```
 sudo chmod 755 /etc/libvirt/gpubios/gpubios.rom
 ```
-to ensure permissions are ok.
 
 ## VM Setup
 Open Virtual Machine Manager, which should've been installed earlier, click QEMU/KVM, and then the New VM button in the top left. Here are the buttons to press:
