@@ -29,7 +29,23 @@ Now, run
 ```
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
-### If not using grub:
+
+### If using systemd-boot
+```cd /boot/loader/entries/```
+Type "sudo nano", then press TAB, which will select your one entry. If you have multiple, it'll show all of them, select the right one. Then press enter.
+
+Go to the end of the line beginning with **options**, and paste this for AMD:
+```
+iommu=pt amd_iommu=on
+```
+This for intel:
+```
+iommu=pt intel_iommu=on
+```
+CTRL+X, Y, ENTER, to save and exit.
+
+
+### If not using the above:
 Look up changing kernel parameters for your bootloader. It'll be vaguely similar
 
 #### Now reboot
