@@ -234,7 +234,7 @@ echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_gover
 ```
 Copy This into the text editor, and we'll edit to fit your PC.
 
-If you're using GDM (you're on GNOME), replace *systemctl stop display-manager.service* with
+If you're using GDM (you're on GNOME), add this below *systemctl stop display-manager.service*:
 ```
 killall gdm-x-session
 ```
