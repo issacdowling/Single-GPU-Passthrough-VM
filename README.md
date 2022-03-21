@@ -188,21 +188,6 @@ sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/release/end
 ```
 This will download files to do with VM hooks, and make directories, along with restarting libvirtd
 
-Now run:
-```
-sudo nano /etc/libvirt/hooks/kvm.conf
-```
-In the text editor that opened, copy this, remembering that pasting into a terminal is CTRL+SHIFT+V: 
-```
-VIRSH_GPU_VIDEO=pcie_0000_
-VIRSH_GPU_AUDIO=pcie_0000_
-```
-Now, add your PCIE IOMMU IDs you saved before. The formatting is as so...
-If I have an ID of 2b:00:1, I would enter is as 2b_00_1 after the underscore in the text file.
-So, for me, it's VIRSH_GPU_VIDEO=pcie_0000_2b_00_0, and VIRSH_GPU_AUDIO=pcie_0000_2b_00_1
-
-Now, **CTRL+X, Y, Enter**
-
 #### Start file
 Run
 ```
