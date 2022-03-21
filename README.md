@@ -298,8 +298,6 @@ The first 4 sections should be left alone always.
 
 For VTconsoles, make the same changes, if any, you made in the start script.
 
-Also, if not using sddm (for example, gnome users with gdm), change that here too.
-
 As with the start script, you can later try reducing/removing any sleep commands
 
 On NVIDIA, **add these before "rebind GPU"
