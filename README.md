@@ -224,11 +224,7 @@ echo 0 > /sys/class/vtconsole/vtcon1/bind
 echo "efi-framebuffer.0" > /sys/bus/platform/devices/efi-framebuffer.0/driver/unbind
 
 #Avoid race condition
-sleep 10
-
-#unbind GPU 
-virsh nodedev-detach $VIRSH_GPU_VIDEO
-virsh nodedev-detach $VIRSH_GPU_AUDIO
+sleep 3
 
 #load vfio
 modprobe vfio
@@ -242,7 +238,7 @@ Copy This into the text editor, and we'll edit to fit your PC.
 
 For the VTconsoles bit, go into another terminal and run ``ls /sys/class/vtconsole/``. For however many vtcons there are, copy the lines that are already in this code, changing the number to match. Most people just have vtcon0 and 1, which is already setup.
 
-The avoid race condition section basically just waits to ensure previous bits of code are excecuted before continuing. For most people, this does not need to be 10, but for some it does. Start at 10, and then once we're done, try lowering it and seeing what works. Personally, I use 1
+The avoid race condition section basically just waits to ensure previous bits of code are excecuted before continuing. For most people, this does not need to be 10, but for some it does. Start at 10, and then once we're done, try lowering it and seeing what works. Personally, I use 0.5
 
 If on AMD, you're done, if on nvidia, **add these lines just before Unbind GPU**
 ```
@@ -271,19 +267,9 @@ modprobe -r vfio_pci
 modprobe -r vfio_iommu_type1
 modprobe -r vfio
 
-sleep 2
-
-#Rebind GPU
-virsh nodedev-reattach $VIRSH_GPU_VIDEO
-virsh nodedev-reattach $VIRSH_GPU_AUDIO
-
-sleep 2
-
 #Rebind VTconsoles
 echo 1 > /sys/class/vtconsole/vtcon0/bind
 echo 1 > /sys/class/vtconsole/vtcon1/bind
-
-sleep 3
 
 #Rebind efifb
 echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
