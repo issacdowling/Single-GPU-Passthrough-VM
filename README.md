@@ -62,10 +62,9 @@ Note the characters (e.g. 2b:00.0) preceeding your "VGA compatible controller" (
 First, ensure the multilib repo is enabled.
 Run
 ```
-sudo nano /etc/pacman.conf
+sudo sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
+sudo pacman -Syu
 ```
-Then, scroll down until [Multilib], and delete the # from that line, and the line below.
-CTRL+X,Y,ENTER to save and quit
 
 Run this. It downloads necessary packages, and enables services. It will likely ask you for your password multiple times, however this is why it's important that you can see exactly the commands we're running.
 ```
