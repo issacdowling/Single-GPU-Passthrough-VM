@@ -240,16 +240,6 @@ echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_gover
 ```
 Copy This into the text editor, and we'll edit to fit your PC.
 
-If you're using GDM (you're on GNOME), add this below *systemctl stop display-manager.service*:
-```
-killall gdm-x-session
-```
-if you're using Xorg, or
-```
-killall gdm-wayland-session
-```
-if using wayland
-
 For the VTconsoles bit, go into another terminal and run ``ls /sys/class/vtconsole/``. For however many vtcons there are, copy the lines that are already in this code, changing the number to match. Most people just have vtcon0 and 1, which is already setup.
 
 The avoid race condition section basically just waits to ensure previous bits of code are excecuted before continuing. For most people, this does not need to be 10, but for some it does. Start at 10, and then once we're done, try lowering it and seeing what works. Personally, I use 1
