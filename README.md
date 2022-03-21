@@ -1,12 +1,8 @@
-# 1gpupassvm
+# 1gpupassvm (Arch)
 
 ## Update things
 ```
 sudo pacman -Syu
-```
-or
-```
-sudo apt update && sudo apt upgrade
 ```
 
 ## Download what you'll need later
