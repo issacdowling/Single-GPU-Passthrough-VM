@@ -74,8 +74,6 @@ sudo virsh net-autostart default
 sudo virsh net-start default
 ```
 
-IF DOING THIS ON DEBIAN, https://salsa.debian.org/nchevsky/libtpms/-/releases/debian%252F0.8.4-1.0, and https://salsa.debian.org/nchevsky/swtpm/-/releases/debian%252F0.6.0-1.0 is where you can find swtpm. At time of writing, it wasn't in normal repos.
-
 ## Editing files
 Run
 ```
