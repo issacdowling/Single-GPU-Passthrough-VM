@@ -83,7 +83,6 @@ systemctl start libvirtd
 systemctl enable virtlogd.socket
 systemctl start virtlogd.socket
 sudo virsh net-autostart default
-sudo virsh net-start default
 ```
 
 ## Editing files
@@ -150,6 +149,7 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click topology, and manually set topology.
 * Sockets to 1, set cores to -1 from whatever your CPU has, so a 6 core processor would have 5.
 * Go to a terminal and type htop. At the top you'll see a bunch of charts going horizontally at the top, which are numbered. On a Ryzen 3600, they go from 0-11, meaning there are 12 threads, or 2x the core count, meaning it has hyperthreading. If you have double as many bars as cores, set threads on your VM to 2. If it's the same as the physical cores you have, set threads to 1.
+* Untick "Copy host CPU configuration" IF it says (host-passthrough) after it, and select host-model from the dropdown.
 
 * Click add hardware in the bottom left of the virtual machine manager, and select storage, which is normally at the top
 * Set however many GB you want it to have (keep in mind, the virtual disk only takes as much space as the VM is actually using, so don't worry about it immediately eating all your storage space on the Host)
