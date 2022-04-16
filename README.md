@@ -195,11 +195,11 @@ sudo nano /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
 ```
 Paste
 ```
-#load variables defined earlier
-source "/etc/libvirt/hooks/kvm.conf"
-
 #Stop disp manager
 systemctl stop display-manager.service
+#If on Gnome, uncomment one of these if on X or Wayland
+#killall gdm-wayland-session
+#killall gdm-x-session
 
 #unbind VTconsoles
 echo 0 > /sys/class/vtconsole/vtcon0/bind
@@ -244,9 +244,6 @@ sudo nano /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
 ```
 In the text editor, paste this:
 ```
-#load variables
-source "/etc/libvirt/hooks/kvm.conf"
-
 #unload vfio-pci
 modprobe -r vfio_pci
 modprobe -r vfio_iommu_type1
