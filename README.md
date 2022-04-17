@@ -77,7 +77,7 @@ sudo pacman -Syu
 
 Run this. It downloads necessary packages, and enables services. It will likely ask you for your password multiple times, however this is why it's important that you can see exactly the commands we're running.
 ```
-sudo pacman -S virt-manager qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm
+sudo pacman -S virt-manager qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm wget
 systemctl enable libvirtd.service
 systemctl start libvirtd
 systemctl enable virtlogd.socket
