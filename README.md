@@ -205,9 +205,6 @@ sleep 3
 modprobe vfio
 modprobe vfio_pci
 modprobe vfio_iommu_type1
-
-#CPU perf
-echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 ```
 Copy This into the text editor, and we'll edit to fit your PC.
 
@@ -248,9 +245,6 @@ echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
 
 #Restart Display Service
 systemctl start display-manager.service
-
-#CPU perf
-echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 ```
 The first 4 sections should be left alone always. 
 
