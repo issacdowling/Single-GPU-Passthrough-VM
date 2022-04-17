@@ -83,6 +83,7 @@ systemctl start libvirtd
 systemctl enable virtlogd.socket
 systemctl start virtlogd.socket
 sudo virsh net-autostart default
+sudo virsh net-start default
 ```
 
 ## Editing files
@@ -91,23 +92,13 @@ Run
 sudo nano /etc/libvirt/libvirtd.conf
 ```
 Now, CTRL+W, and search unix_sock.
-Remove # from that line, and replace libvirt with root.
-CTRL+W again, search for unix_sock_rw.
-Remove # again.
+Remove # from that line, CTRL+W again, unix_sock_rw, remove #.
 
 CTRL+X, Y, ENTER, to save and exit.
-
-Now, run
-```
-sudo nano /etc/libvirt/qemu.conf
-```
-CTRL+W to search for: user = "r
-Remove the # from the line, and remove the # from the line a little below named: group = "root"
 
 Finally, 
 ```
 sudo usermod -a -G libvirt $(whoami)
-sudo usermod -a -G kvm $(whoami)
 sudo systemctl start libvirtd
 sudo systemctl enable libvirtd
 ```
