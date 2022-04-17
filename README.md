@@ -325,7 +325,8 @@ Then, just below the hyperv line, paste:
 ````    
 
 ## Restart your PC, and give your VM a go!
-
+## Networking may not work, here's how to fix that.
+Enable ACS patching and pass through your ethernet card. Honestly unsure why it isn't working properly otherwise right now.
 ## If it works, here are some extras.
 ### Performance
 If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
