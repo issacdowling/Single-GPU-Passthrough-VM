@@ -96,6 +96,14 @@ Remove # from that line, CTRL+W again, unix_sock_rw, remove #.
 
 CTRL+X, Y, ENTER, to save and exit.
 
+Now, run
+```
+sudo nano /etc/libvirt/qemu.conf
+```
+CTRL+W to search for: user = "r Remove the # from the line, and remove the # from the line a little below named: group = "root"
+
+Again, CTRL+X, Y, ENTER, to save and exit.
+
 Finally, 
 ```
 sudo usermod -a -G libvirt $(whoami)
