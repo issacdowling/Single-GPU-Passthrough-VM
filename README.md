@@ -2,7 +2,7 @@
 ## Prerequisites
 * Ensure above 4g decoding and resizeable bar are disabled. Right now, they cause VM issues.
 * Enable your respective virtualisation technology, for AMD, that's CSM in the bios.
-* Be on Arch. This branch is for Arch. [Click here for Fedora.](https://github.com/IssacDowling/1gpupassvm/tree/Fedora)
+* Be on Arch. This branch is for Arch. [Click here for Fedora.](https://github.com/IssacDowling/1gpupassvm/tree/fedora)
 
 ## Update things
 ```
