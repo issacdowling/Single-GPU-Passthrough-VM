@@ -1,4 +1,8 @@
 # 1gpupassvm (Arch)
+## Prerequisites
+* Ensure above 4g decoding and resizeable bar are disabled. Right now, they cause VM issues.
+* Enable your respective virtualisation technology, for AMD, that's CSM in the bios.
+* Be on Arch. This branch is for Arch. [Click here for Fedora.](https://github.com/IssacDowling/1gpupassvm/tree/Fedora)
 
 ## Update things
 ```
@@ -177,12 +181,8 @@ sudo mkdir /etc/libvirt/hooks
 sudo wget 'https://raw.githubusercontent.com/PassthroughPOST/VFIO-Tools/master/libvirt_hooks/qemu' -O /etc/libvirt/hooks/qemu
 sudo chmod +x /etc/libvirt/hooks/qemu
 sudo systemctl restart libvirtd
-sudo mkdir /etc/libvirt/hooks/qemu.d
-sudo mkdir /etc/libvirt/hooks/qemu.d/Windows
-sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/prepare
-sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/release
-sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/prepare/begin
-sudo mkdir /etc/libvirt/hooks/qemu.d/Windows/release/end
+sudo mkdir -p /etc/libvirt/hooks/qemu.d/Windows/prepare/begin
+sudo mkdir -p /etc/libvirt/hooks/qemu.d/Windows/release/end
 ```
 This will download files to do with VM hooks, and make directories, along with restarting libvirtd
 
