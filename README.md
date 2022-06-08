@@ -1,18 +1,19 @@
 # 1gpupassvm (Arch)
 ## Prerequisites
-* Ensure above 4g decoding and resizeable bar are disabled. Right now, they cause VM issues.
+* I own an AMD GPU, and so NVIDIA users will need to look elsewhere
+* I am not an expert, if this causes you issues or is in some way unideal, that's your responsibility to deal with
+* Ensure above 4g decoding is disabled in the bios. Right now, it causes VM issues.
 * Enable your respective virtualisation technology, for AMD, that's CSM in the bios.
 * Be on Arch. This branch is for Arch. [Click here for Fedora.](https://github.com/IssacDowling/1gpupassvm/tree/fedora)
+* Whenever I say "run", copy whatever's in that box into the terminal, and press enter.
+* Download what you'll need later, [VirtIO Drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso) and [Windows ISO](https://www.microsoft.com/en-gb/software-download/windows11/)
+
 
 ## Update things
 ```
 sudo pacman -Syu
 ```
 
-## Download what you'll need later
-[VirtIO Drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
-
-[Windows ISO](https://www.microsoft.com/en-gb/software-download/windows11/)
 ## Change bootloader options
 ### If using grub:
 ```
@@ -138,12 +139,11 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Downloads
 * Select the ISO file
 * Forward
-* 80% of your Ram in the Memory section
-* Leave CPU settings alone for later
+* 80% of your ram, leave CPU settings alone for later
 * Forward
 * Untick "Enable Storage For This Machine", we'll handle it later.
 * Forward
-* Set a name. Examples shown will use "Windows". Change "Windows" to whatever you call your VM if you choose something different.
+* Set a name. Examples shown will use "Windows". **Change "Windows" to whatever you call your VM in the later scripts if you choose something different.**
 * Tick customise config before install
 * Finish
 * Click BIOS, and change it to the /x64/OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
@@ -152,21 +152,22 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click topology, and manually set topology.
 * Sockets to 1, set cores to -1 from whatever your CPU has, so a 6 core processor would have 5.
 * Go to a terminal and type htop. At the top you'll see a bunch of charts going horizontally at the top, which are numbered. On a Ryzen 3600, they go from 0-11, meaning there are 12 threads, or 2x the core count, meaning it has hyperthreading. If you have double as many bars as cores, set threads on your VM to 2. If it's the same as the physical cores you have, set threads to 1.
-* Untick "Copy host CPU configuration" IF it says (host-passthrough) after it, and select host-model from the dropdown.
-
-* Click add hardware in the bottom left of the virtual machine manager, and select storage, which is normally at the top
-* Set however many GB you want it to have (keep in mind, the virtual disk only takes as much space as the VM is actually using, so don't worry about it immediately eating all your storage space on the Host)
-* Set the Bus Type to VirtIO instead of SATA
+* Click add hardware in the bottom left of the virtual machine manager, and select storage. Set the Bus Type to VirtIO instead of SATA, and pick however much storage you want.
 * Add hardware to your VM again, select storage, and set the device type to CDROM Device. Click "select or create custom storage", then browse to the VirtIO iso. Press finish
 * Click on SATA CDROM 2, and click browse, then browse local, and head to your downloads, where you'll double click the VirtIO drivers iso. Press apply.
-* Click add hardware, this time add a TPM with the default settings
 * Now, go to the top, and press begin installation.
 * When you see a menu which says press any key to boot from CD, press any key. If you miss the time window, close the VM, right click it and force off, then try again.
 
 **Keep in mind, during first install, graphics and framerate will be pretty bad**
 
 * Go through installation as normal for the first bit.
-* Next, install now, I don't have a product key, any version not ending in N, read and accept, next, custom install.
+### For Windows 11 only
+
+* Due to some potential emulated TPM issues, we'll be telling Windows to ignore it. Once you're onto the windows version select screen, press Shift+F10, then type regedit.exe . Now, go to localmachine, system, right click setup, and make a new key called LabConfig.
+* Inside LabConfig, make a new 32bit value called BypassTPMCheck. Double click it, set the value to one, then continue setup as normal by selecting a windows 11 edition.
+
+### Back to any Windows version
+
 * Now, press load drivers, then ok, and select the driver that appears with w11 (or whatever other version of windows you're using) in the name. Click it and press next.
 * Now click on Drive 0 unallocated space, and press next. Windows will install. 
 * When windows restarts, you may be put into windows, but you may be put into a terminal. If in the terminal,click the dropdown near the power icon at the top of the VM, and force it off.
@@ -207,7 +208,7 @@ echo 0 > /sys/class/vtconsole/vtcon1/bind
 echo "efi-framebuffer.0" > /sys/bus/platform/devices/efi-framebuffer.0/driver/unbind
 
 #Avoid race condition
-sleep 3
+sleep 5
 
 #load vfio
 modprobe vfio
@@ -220,20 +221,9 @@ For the VTconsoles bit, go into another terminal and run ``ls /sys/class/vtconso
 
 The avoid race condition section basically just waits to ensure previous bits of code are excecuted before continuing. For most people, this does not need to be 10, but for some it does. Start at 10, and then once we're done, try lowering it and seeing what works. Personally, I use 0.5
 
-If on AMD, you're done, if on nvidia, **add these lines just before Unbind GPU**
-```
-modprobe -r nvidia_drm
-modprobe -r nvidia_modeset
-modprobe -r drm_kms_helper
-modprobe -r nvidia
-modprobe -r i2c_nvidia_gpu
-modprobe -r drm
-modprobe -r nvidia_uvm
-```
+Then, press **CTRL+X, Y, ENTER**
 
-Then, leave the rest of the script alone, and **CTRL+X, Y, ENTER**
-
-Run
+Now, run
 ```
 sudo nano /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
 ```
@@ -258,18 +248,6 @@ The first 4 sections should be left alone always.
 
 For VTconsoles, make the same changes, if any, you made in the start script.
 
-As with the start script, you can later try reducing/removing any sleep commands
-
-On NVIDIA, **add these before "rebind GPU"
-```
-modprobe nvidia_drm
-modprobe nvidia_modeset
-modprobe drm_kms_helper
-modprobe nvidia
-modprobe i2c_nvidia_gpu
-modprobe drm
-modprobe nvidia_uvm
-```
 **Now, CTRL+X, Y, ENTER**
 
 
@@ -310,7 +288,7 @@ Open virtual machine manager, and click on your machine. Go to the info icon in 
 * Look for the line beginning with "Spinlock State"
 * If you're on NVIDIA, remember to patch your bios like I mentioned earlier, there are guides online, and paste this line in:
 ````
-<vendor_id state="on" value="spaghetti"/>
+<vendor_id state="on" value="archlinux"/>
       <vpindex state="on"/>
       <runtime state="on"/>
       <synic state="on"/>
@@ -327,7 +305,7 @@ Then, just below the hyperv line, paste:
 
 ## Restart your PC, and give your VM a go!
 ## Networking may not work, here's how to fix that.
-Enable ACS patching and pass through your ethernet card. Honestly unsure why it isn't working properly otherwise right now.
+Enable ACS patching and pass through your ethernet card. Honestly unsure why it isn't working properly sometimes right now.
 ## If it works, here are some extras.
 ### Performance
 If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
@@ -373,4 +351,4 @@ Not only should this fix any GPU-related IOMMU group issues, but it should also 
 
 
 ### Anticheat
-If you want this VM to be compatible with the most annoying Anti-VM games, go to virt-manager, then the CPU section. Untick "copy host configuration", then set the model to "host-passthrough". Then, boot the VM, and just go to "Turn windows features on or off", and enable Hyper-V. There's a good reason not to have this enabled if you don't absolutely need it, since CPU performance takes a large hit, however this will allow you to bypass *most but not all* VM detection
+If you want this VM to be compatible with the most annoying Anti-VM games, go to virt-manager, then the CPU section. Untick "copy host configuration", then set the model to "host-model". Then, boot the VM, and just go to "Turn windows features on or off", and enable Hyper-V. There's a good reason not to have this enabled if you don't absolutely need it, since CPU performance takes a large hit, however this will allow you to bypass *most but not all* VM detection
