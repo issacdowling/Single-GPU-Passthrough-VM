@@ -83,35 +83,22 @@ sudo pacman -Syu
 Run this. It downloads necessary packages, and enables services. It will likely ask you for your password multiple times, however this is why it's important that you can see exactly the commands we're running.
 ```
 sudo pacman -S virt-manager qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm wget
-systemctl enable libvirtd.service
-systemctl start libvirtd
-systemctl enable virtlogd.socket
-systemctl start virtlogd.socket
-sudo virsh net-autostart default
-sudo virsh net-start default
 ```
 
 ## Editing files
 Run
 ```
 sudo nano /etc/libvirt/libvirtd.conf
+
 ```
 Now, CTRL+W, and search unix_sock.
 Remove # from that line, CTRL+W again, unix_sock_rw, remove #.
 
 CTRL+X, Y, ENTER, to save and exit.
 
-Now, run
-```
-sudo nano /etc/libvirt/qemu.conf
-```
-CTRL+W to search for: user = "r Remove the # from the line, and remove the # from the line a little below named: group = "root"
-
-Again, CTRL+X, Y, ENTER, to save and exit.
-
 Finally, 
 ```
-sudo usermod -a -G libvirt $(whoami)
+sudo usermod -aG libvirt $USER
 sudo systemctl start libvirtd
 sudo systemctl enable libvirtd
 ```
@@ -145,7 +132,7 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Forward
 * Set a name. Examples shown will use "Windows". **Change "Windows" to whatever you call your VM in the later scripts if you choose something different.**
 * Tick customise config before install
-* Finish
+* Finish (press yes if it asks you anything about networks/permissions)
 * Click BIOS, and change it to the /x64/OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
 * Apply
 * Go to CPUs
@@ -155,13 +142,15 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click add hardware in the bottom left of the virtual machine manager, and select storage. Set the Bus Type to VirtIO instead of SATA, and pick however much storage you want.
 * Add hardware to your VM again, select storage, and set the device type to CDROM Device. Click "select or create custom storage", then browse to the VirtIO iso. Press finish
 * Click on SATA CDROM 2, and click browse, then browse local, and head to your downloads, where you'll double click the VirtIO drivers iso. Press apply.
+* Add hardware, TPM, and set version to 2. If that fails, go to the **"For Windows 11 only"** section later when installing, continue normally for now.
 * Now, go to the top, and press begin installation.
 * When you see a menu which says press any key to boot from CD, press any key. If you miss the time window, close the VM, right click it and force off, then try again.
+* If this still doesn't work, you can go to the boot menu section in virt-manager and tick the CD.
 
 **Keep in mind, during first install, graphics and framerate will be pretty bad**
 
 * Go through installation as normal for the first bit.
-### For Windows 11 only
+### For Windows 11 with TPM issues only
 
 * Due to some potential emulated TPM issues, we'll be telling Windows to ignore it. Once you're onto the windows version select screen, press Shift+F10, then type regedit.exe . Now, go to localmachine, system, right click setup, and make a new key called LabConfig.
 * Inside LabConfig, make a new 32bit value called BypassTPMCheck. Double click it, set the value to one, then continue setup as normal by selecting a windows 11 edition.
