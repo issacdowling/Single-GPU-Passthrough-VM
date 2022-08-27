@@ -4,7 +4,7 @@
 * I am not an expert, if this causes you issues or is in some way unideal, that's your responsibility to deal with
 * Ensure above 4g decoding is disabled in the bios. Right now, it causes VM issues.
 * Enable your respective virtualisation technology, for AMD, that's CSM in the bios.
-* Be on Arch. This branch is for Arch. [Click here for Fedora.](https://github.com/IssacDowling/1gpupassvm/tree/fedora)
+* Be on Arch. This branch is for Arch. [Click here for Fedora.](https://gitlab.com/issacdowling/1gpupassvm/tree/fedora)
 * Whenever I say "run", copy whatever's in that box into the terminal, and press enter.
 * Download what you'll need later, [VirtIO Drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso) and [Windows ISO](https://www.microsoft.com/en-gb/software-download/windows11/)
 
