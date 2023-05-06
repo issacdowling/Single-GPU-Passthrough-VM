@@ -31,7 +31,10 @@ To the line containing "GRUB_CMDLINE_LINUX="
 CTRL+X, Y, Enter, to save and exit, and it'll regenerate your grub2 config.
 
 ## VM Setup
-Open Virtual Machine Manager, which should've been installed earlier, click QEMU/KVM, and then the New VM button in the top left. Here are the buttons to press:
+Open Virtual Machine Manager, which should've been installed earlier,
+* Click edit at the top, followed by preferences
+* Enable XML editing
+Then, click QEMU/KVM, and then the New VM button in the top left. Here are the buttons to press:
 * Local Install Media
 * Forward
 * Browse
@@ -53,9 +56,27 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click topology, and manually set topology.
 * Sockets to 1, set cores to -1 from whatever your CPU has, so a 6 core processor would have 5.
 * Go to a terminal and type htop. At the top you'll see a bunch of charts going horizontally at the top, which are numbered. On a Ryzen 3600, they go from 0-11, meaning there are 12 threads, or 2x the core count, meaning it has hyperthreading. If you have double as many bars as cores, set threads on your VM to 2. If it's the same as the physical cores you have, set threads to 1.
-* Click add hardware in the bottom left of the virtual machine manager, and select storage. Set the Bus Type to VirtIO instead of SATA, and pick however much storage you want.
+* Click add hardware in the bottom left of the virtual machine manager, and select storage. Set the Bus Type to VirtIO instead of SATA, and pick however much storage you want (minimum 64GB for Windows 11).
 * Add hardware to your VM again, select storage, and set the device type to CDROM Device. Click "select or create custom storage", then browse to the VirtIO iso. Press finish
-* Click on SATA CDROM 2, and click browse, then browse local, and head to your downloads, where you'll double click the VirtIO drivers iso. Press apply.
+* Now go to overview, and click the XML tab.
+* Look for the line beginning with "spinlocks State"
+* Paste this:
+````
+<vendor_id state="on" value="fedoralinux"/>
+      <vpindex state="on"/>
+      <runtime state="on"/>
+      <synic state="on"/>
+      <stimer state="on"/>
+      <reset state="on"/>
+      <frequencies state='on'/>
+````
+Then, just below the end hyperv line, paste:
+````
+    <kvm>
+      <hidden state="on"/>
+    </kvm>
+````    
+
 * Now, go to the top, and press begin installation.
 * If you see a permissions error, run
 ```
@@ -219,26 +240,6 @@ Open virtual machine manager, and click on your machine. Go to the info icon in 
 * Your GPU Video adapter
 * Repeat for GPU audio adapter. You can identify either of these using the IDs from before.
 * Close the VM window for a sec, go back to the first Virtual Machine Manager window.
-* Click edit at the top, followed by preferences
-* Enable XML editing, then click back into your VM
-* Now go to overview, and click the XML tab.
-* Look for the line beginning with "Spinlock State"
-* Paste this:
-````
-<vendor_id state="on" value="fedoralinux"/>
-      <vpindex state="on"/>
-      <runtime state="on"/>
-      <synic state="on"/>
-      <stimer state="on"/>
-      <reset state="on"/>
-      <frequencies state='on'/>
-````
-Then, just below the end hyperv line, paste:
-````
-    <kvm>
-      <hidden state="on"/>
-    </kvm>
-````    
 
 ## Restart your PC, and give your VM a go!
 It will likely not work, because of SELinux. 
