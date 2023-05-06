@@ -49,6 +49,7 @@ Open Virtual Machine Manager, which should've been installed earlier, click QEMU
 * Click BIOS, and change it to the /x64/OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
 * Apply
 * Go to CPUs
+* Set configuration to host-model
 * Click topology, and manually set topology.
 * Sockets to 1, set cores to -1 from whatever your CPU has, so a 6 core processor would have 5.
 * Go to a terminal and type htop. At the top you'll see a bunch of charts going horizontally at the top, which are numbered. On a Ryzen 3600, they go from 0-11, meaning there are 12 threads, or 2x the core count, meaning it has hyperthreading. If you have double as many bars as cores, set threads on your VM to 2. If it's the same as the physical cores you have, set threads to 1.
