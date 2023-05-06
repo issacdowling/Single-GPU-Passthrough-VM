@@ -14,6 +14,7 @@ Run these to update and install what's necessary, and add yourself to the libvir
 sudo dnf upgrade -y --refresh
 sudo dnf -y group install Virtualization
 sudo usermod -aG libvirt,input,kvm $USER
+sudo systemctl restart libvirtd
 ```
 ## Change bootloader options
 Run this
