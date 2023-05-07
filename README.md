@@ -220,8 +220,7 @@ Open virtual machine manager, and click on your machine. Go to the info icon in 
 * Add Hardware
 * PCI Host device
 * Your GPU Video adapter
-* Repeat for GPU audio adapter. You can identify either of these using the IDs from before.
-* Close the VM window for a sec, go back to the first Virtual Machine Manager window.
+* Repeat for GPU audio adapter.
 
 ## Restart your PC, and give your VM a go!
 It will likely not work, because of SELinux. 
