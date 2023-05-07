@@ -102,17 +102,18 @@ Run
 sudo mkdir /etc/libvirt/hooks
 sudo mkdir -p /etc/libvirt/hooks/qemu.d/Windows/prepare/begin
 sudo mkdir -p /etc/libvirt/hooks/qemu.d/Windows/release/end
-```
-This will make directories, along with restarting libvirtd
-
-#### Hook file
-```
 sudo nano /etc/libvirt/hooks/qemu
 sudo chmod +x /etc/libvirt/hooks/qemu
 sudo systemctl restart libvirtd
+sudo nano /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
+sudo nano /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
+sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
+sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
 ```
+This will make directories, enter the text editor, and restart libvirtd
 
-Paste
+#### Hook file
+Paste into the text editor:
 
 ```
 #!/usr/bin/env bash
@@ -150,11 +151,7 @@ fi
 ```
 
 #### Start file
-Run
-```
-sudo nano /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
-```
-Paste
+Next, paste
 ```
 #Debugging (show currently running command)
 set -x
@@ -183,11 +180,9 @@ Uncommend the unbind efifb line if not using a 6000 series+ card.
 
 Then, leave the rest of the script alone, and **CTRL+X, Y, ENTER**
 
-Run
-```
-sudo nano /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
-```
-In the text editor, paste this:
+#### Revert File
+
+Now, in the text editor, paste this:
 ```
 #unload vfio-pci
 modprobe -r vfio-pci
@@ -207,12 +202,6 @@ Uncomment the rebind efifb line if not using a 6000 series+ card.
 
 **Now, CTRL+X, Y, ENTER**
 
-
-Finally, *ensure these scripts are executable!*
-```
-sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/prepare/begin/start.sh
-sudo chmod +x /etc/libvirt/hooks/qemu.d/Windows/release/end/revert.sh
-```
 # We're nearly there! Give yourself a pat on the back
 
 Open virtual machine manager, and click on your machine. Go to the info icon in the top left, and follow these steps:
