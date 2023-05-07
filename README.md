@@ -89,14 +89,7 @@ which will tell SElinux to allow whatever it's blocking.
 **Keep in mind, during first install, graphics and framerate will be pretty bad**
 
 * Go through installation as normal for the first bit.
-### For Windows 11 only
-
-* Due to some potential emulated TPM issues, we'll be telling Windows to ignore it. Once you're onto the windows version select screen, press Shift+F10, then type regedit.exe . Now, go to localmachine, system, right click setup, and make a new key called LabConfig.
-* Inside LabConfig, make a new 32bit value called BypassTPMCheck. Double click it, set the value to one, then continue setup as normal by selecting a windows 11 edition.
-
-### Back to any Windows version
-
-* Now, press load drivers, then ok, and select the driver that appears with w11 (or whatever other version of windows you're using) in the name. Click it and press next.
+* Now, at the install section, press load drivers, then ok, and select the driver that appears with w11 (or whatever other version of windows you're using) in the name. Click it and press next.
 * Now click on Drive 0 unallocated space, and press next. Windows will install. 
 * When windows restarts, you may be put into windows, but you may be put into a terminal. If in the terminal,click the dropdown near the power icon at the top of the VM, and force it off.
 * Press the info icon, and press boot options, and tick VFIO disk 1. Then, go to the 2 CDROM drives, and remove + delete them.
