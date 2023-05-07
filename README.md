@@ -206,7 +206,7 @@ Uncomment the rebind efifb line if not using a 6000 series+ card.
 
 Open virtual machine manager, and click on your machine. Go to the info icon in the top left, and follow these steps:
 * Remove Tablet
-* Remove Display Spice (THIS MAY NOT WORK. IF NOT, YOU JUST HAVE TO REMOVE IT AND ANYTHING RELATED FROM THE XML IN OVERVIEW)
+* Remove Display Spice (THIS MAY NOT WORK. IF NOT, YOU JUST HAVE TO REMOVE IT AND ANYTHING RELATED FROM THE XML IN OVERVIEW, INCLUDING USB SPICE REDIRECT)
 * Remove Serial 1
 * Remove Channel spice
 * Remove Sound ich9
