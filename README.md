@@ -222,8 +222,13 @@ Open virtual machine manager, and click on your machine. Go to the info icon in 
 * Your GPU Video adapter
 * Repeat for GPU audio adapter.
 
+Add this to the CPU section for multithreading improvements on Ryzen:
+```
+<feature policy='require' name='topoext'/>
+```
+
 ## Restart your PC, and give your VM a go!
-It will likely not work, because of SELinux. 
+It may not work, because of SELinux. 
 
 I am not an expert, these changes have not been verified by me or anybody else not to hurt the security or reliability of your system. These are just the commands I needed to run to ensure SELINUX would allow my VM to work fully.
 ```
@@ -259,12 +264,6 @@ pcie_acs_override=downstream,multifunction
 CTRL+X, Y, ENTER.
 
 Not only should this fix any GPU-related IOMMU group issues, but it should also allow you to directly passthrough things like your motherboard's NIC, or a PCIE USB card that's not cooperating. Anything PCIE should be free to pass now. Also note: passing a USB controller is MUCH PREFERRED to individually forwarding USB devices. It allows hotplug, and is more compatible
-
-### Performance
-If on ryzen, add this to your CPU section in the XML, something something performance / hyperthreading
-````
-<feature policy='require' name='topoext'/>
-````
 
 ### Anticheat
 If you want this VM to be compatible with the most annoying Anti-VM games, go to virt-manager, then the CPU section. Untick "copy host configuration", then set the model to "host-passthrough". Then, boot the VM, and just go to "Turn windows features on or off", and enable Hyper-V. There's a good reason not to have this enabled if you don't absolutely need it, since CPU performance takes a large hit, however this will allow you to bypass *most but not all* VM detection
