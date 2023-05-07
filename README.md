@@ -92,7 +92,7 @@ which will tell SElinux to allow whatever it's blocking.
 * Now, at the install section, press load drivers, then ok, and select the driver that appears with w11 (or whatever other version of windows you're using) in the name. Click it and press next.
 * Now click on Drive 0 unallocated space, and press next. Windows will install. 
 * When windows restarts, you may be put into windows, but you may be put into a terminal. If in the terminal,click the dropdown near the power icon at the top of the VM, and force it off.
-* Press the info icon, and press boot options, and tick VFIO disk 1. Then, go to the CDROM drive with the Windows ISO on, and remove + delete it.
+* Press the info icon, and press boot options, and tick VFIO disk 1, unticking everything else. Then, go to the CDROM drive with the Windows ISO on, and remove + delete it.
 * Now press play, and go back to the view icon next to the info icon. You'll go through the windows personalisation setup now.
 * When you're on the windows desktop, shut down windows. You can X out of it in Linux afterwards.
 
