@@ -238,6 +238,14 @@ sudo semodule -i my-qemusystemx86.pp
 It may now work. If it doesn't, run it again. Keep going until it does (2 tries for me got it working).
 ## If it works, here are some extras.
 
+### Good audio
+
+Run this to install dependencies:
+```
+sudo dnf install -y pipewire-jack-audio-connection-kit carla
+```
+Use [this page on the Archwiki](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_audio_from_virtual_machine_to_host_via_JACK_and_PipeWire) for the best method... though it didn't work for me.
+
 ### I want to pass through devices in the same IOMMU group (this is the section for people with wonky IOMMU groups from earlier)
 #### This is also relevant for people who want to pass through their audio/network devices to the VM
 Switch your kernel to Xanmod. Or do some other method to get the ACS patch, but I don't know how.
