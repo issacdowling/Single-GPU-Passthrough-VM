@@ -41,7 +41,7 @@ Then, click QEMU/KVM, and then the New VM button in the top left. Here are the b
 * Browse Local
 * Downloads
 * Select the ISO file
-* Forward
+* Forward (if asked about search permissions, allow it)
 * 80% of your ram, leave CPU settings alone for later
 * Forward
 * Untick "Enable Storage For This Machine", we'll handle it later.
@@ -49,7 +49,7 @@ Then, click QEMU/KVM, and then the New VM button in the top left. Here are the b
 * Set a name. Examples shown will use "Windows". **Change "Windows" to whatever you call your VM in the later scripts if you choose something different.**
 * Tick customise config before install
 * Finish
-* Click BIOS, and change it to the /x64/OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
+* Click BIOS, and change it to the OVMF_CODE.secboot option (secboot enables secureboot. If you know you don't want it, you can disable it, but it's necessary for windows 11)
 * Apply
 * Go to CPUs
 * Set configuration to host-model
@@ -60,7 +60,7 @@ Then, click QEMU/KVM, and then the New VM button in the top left. Here are the b
 * Add hardware to your VM again, select storage, and set the device type to CDROM Device. Click "select or create custom storage", then browse to the VirtIO iso. Press finish
 * Now go to overview, and click the XML tab.
 * Look for the line beginning with "spinlocks State"
-* Paste this:
+* Paste this after it:
 ````
 <vendor_id state="on" value="fedoralinux"/>
       <vpindex state="on"/>
@@ -83,7 +83,7 @@ Then, just below the end hyperv line, paste:
 sudo ausearch -c 'qemu-system-x86' --raw | audit2allow -M my-qemusystemx86
 sudo semodule -i my-qemusystemx86.pp
 ```
-which will tell SElinux to allow whatever it's blocking.
+which will tell SElinux to allow whatever it's blocking. Beware, obviously this could cause other security issues, but it works fine for me...
 * When you see a menu which says press any key to boot from CD, press any key. If you miss the time window, close the VM, right click it and force off, then try again.
 
 **Keep in mind, during first install, graphics and framerate will be pretty bad**
@@ -158,7 +158,7 @@ set -x
 
 #Stop disp manager
 systemctl stop display-manager.service
-#If not on Gnome, comment these, and pick X or Wayland
+#If not on Gnome, comment these, and pick X or Wayland. Other DEs / WMs can go here too
 killall gdm-wayland-session
 #killall gdm-x-session
 
@@ -206,7 +206,7 @@ Uncomment the rebind efifb line if not using a 6000 series+ card.
 
 Open virtual machine manager, and click on your machine. Go to the info icon in the top left, and follow these steps:
 * Remove Tablet
-* Remove Display Spice (THIS MAY NOT WORK. IF NOT, YOU JUST HAVE TO REMOVE IT AND ANYTHING RELATED FROM THE XML IN OVERVIEW, INCLUDING USB SPICE REDIRECT)
+* Remove Display Spice (THIS MAY NOT WORK. IF NOT, YOU JUST HAVE TO REMOVE IT AND ANYTHING RELATED FROM THE XML IN OVERVIEW, IT'LL BE UNDER THE \<GRAPHICS\> SECTION)
 * Remove Serial 1
 * Remove Channel spice
 * Remove Sound ich9
@@ -228,8 +228,9 @@ Add this to the CPU section for multithreading improvements on Ryzen:
 ```
 
 ## Restart your PC, and give your VM a go!
-It may not work, because of SELinux. 
+It may not work, because of SELinux... or TPM... or resizeable bar.
 
+#### SELinux
 I am not an expert, these changes have not been verified by me or anybody else not to hurt the security or reliability of your system. These are just the commands I needed to run to ensure SELINUX would allow my VM to work fully.
 ```
 sudo ausearch -c 'qemu-system-x86' --raw | audit2allow -M my-qemusystemx86
@@ -238,16 +239,25 @@ sudo semodule -i my-qemusystemx86.pp
 It may now work. If it doesn't, run it again. Keep going until it does (2 tries for me got it working).
 ## If it works, here are some extras.
 
-### Good audio
+### Audio
 
-Run this to install dependencies:
+There are pipewire/jack passthrough methods, they don't work for me. If you use your GPU's audio output, you don't need to worry about this.
+
+Thankfully, my motherboard's audio device is in its own IOMMU group, so all I need to do is pass it as a PCIE device in the same way I did my GPU.
+
+If you want to check IOMMU groups, you can run this: (make sure `pciutils` is installed since it wasn't by default for me)
 ```
-sudo dnf install -y pipewire-jack-audio-connection-kit carla
+for g in $(find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V); do
+    echo "IOMMU Group ${g##*/}:"
+    for d in $g/devices/*; do
+        echo -e "\t$(lspci -nns ${d##*/})"
+    done;
+done;
 ```
-Use [this page on the Archwiki](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_audio_from_virtual_machine_to_host_via_JACK_and_PipeWire) for the best method... though it didn't work for me.
+
+What you're looking for is your MOTHERBOARD'S (or PCIE sound card if you have one) audio device to be in a group all by itself. If that's the case, you can just add it and it'll just work. If it's not alone, the below section is for you:
 
 ### I want to pass through devices in the same IOMMU group (this is the section for people with wonky IOMMU groups from earlier)
-#### This is also relevant for people who want to pass through their audio/network devices to the VM
 Switch your kernel to Xanmod. Or do some other method to get the ACS patch, but I don't know how.
 For Xanmod, just run
 ```
