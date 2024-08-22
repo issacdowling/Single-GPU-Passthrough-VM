@@ -1,5 +1,7 @@
 # 1gpupassvm (Fedora)
 
+# This repo is archived, I don't use this anymore. It's here for your reference, but I can't/won't be updating it.
+
 ## Prerequisites
 * I own an AMD GPU, and so NVIDIA users will need to look elsewhere
 * I am not an expert, if this causes you issues or is in some way unideal, that's your responsibility to deal with
